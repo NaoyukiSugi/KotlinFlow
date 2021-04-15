@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,11 +67,35 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 
+        // cencel flow on lifecycle aware
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            simpleFlow().collect { user ->
+//                Log.d(TAG, "Flow1 $user")
+//            }
+//        }
+
+
+        // filter flow
         lifecycleScope.launch(Dispatchers.IO) {
-            simpleFlow().collect { user ->
-                Log.d(TAG, "Flow1 $user")
-            }
+            ageList.asFlow()
+                    .filter { age ->
+                        age % 3 == 1
+                    }
+                    .collect { age ->
+                        Log.d(TAG, age.toString())
+                    }
         }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            userList.asFlow()
+                    .filter { user ->
+                        user == "user3"
+                    }
+                    .collect { user ->
+                        Log.d(TAG, user)
+                    }
+        }
+
 
     }
 
