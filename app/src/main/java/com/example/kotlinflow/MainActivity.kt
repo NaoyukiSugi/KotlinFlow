@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlin.system.measureTimeMillis
 
 class MainActivity : AppCompatActivity() {
 
@@ -223,25 +224,47 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // kotlin flowon
+//        lifecycleScope.launch {
+//            ageFlow()
+//                    .onCompletion {
+//                        Log.d(TAG, "${Thread.currentThread().name} : Declarative: Flow has completed")
+//                    }
+//                    .collect { value ->
+//                        Log.d(TAG, "${Thread.currentThread().name} $value")
+//                    }
+//        }
+//
+//        lifecycleScope.launch {
+//            simpleFlow()
+//                    .flowOn(Dispatchers.IO)
+//                    .onCompletion {
+//                        Log.d(TAG, "${Thread.currentThread().name} : Declarative: Flow has completed")
+//                    }
+//                    .collect { value ->
+//                        Log.d(TAG, "${Thread.currentThread().name} $value")
+//                    }
+//        }
+
+        // Buffer
         lifecycleScope.launch {
-            ageFlow()
-                    .onCompletion {
-                        Log.d(TAG, "${Thread.currentThread().name} : Declarative: Flow has completed")
-                    }
-                    .collect { value ->
-                        Log.d(TAG, "${Thread.currentThread().name} $value")
-                    }
+            val time = measureTimeMillis {
+                numFlow()
+                        .buffer()
+                        .collect {
+                            delay(200)
+                            Log.d(TAG, "Log2: ${Thread.currentThread().name} : $it")
+                        }
+            }
+            Log.d(TAG, "Total Time: $time")
         }
 
-        lifecycleScope.launch {
-            simpleFlow()
-                    .flowOn(Dispatchers.IO)
-                    .onCompletion {
-                        Log.d(TAG, "${Thread.currentThread().name} : Declarative: Flow has completed")
-                    }
-                    .collect { value ->
-                        Log.d(TAG, "${Thread.currentThread().name} $value")
-                    }
+    }
+
+    private fun numFlow(): Flow<Int> = flow {
+        for (i in 1..10) {
+            delay(100)
+            Log.d(TAG, "Log1: ${Thread.currentThread().name}")
+            emit(i)
         }
     }
 
