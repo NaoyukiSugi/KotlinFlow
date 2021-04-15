@@ -157,49 +157,70 @@ class MainActivity : AppCompatActivity() {
 
 
         // Terminal operators reduce
-        lifecycleScope.launch(Dispatchers.IO) {
-            val sum = ageList.asFlow()
-                    .map { age ->
-                        age + 1
-                    }
-                    .reduce { a, b ->
-                        a + b
-                    }
-            Log.d(TAG, sum.toString())
-        }
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            val value = userList.asFlow()
-                    .map { user ->
-                        "$user "
-                    }
-                    .reduce { a, b ->
-                        a + b
-                    }
-            Log.d(TAG, value)
-        }
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            val sum = ageList.asFlow()
+//                    .map { age ->
+//                        age + 1
+//                    }
+//                    .reduce { a, b ->
+//                        a + b
+//                    }
+//            Log.d(TAG, sum.toString())
+//        }
+//
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            val value = userList.asFlow()
+//                    .map { user ->
+//                        "$user "
+//                    }
+//                    .reduce { a, b ->
+//                        a + b
+//                    }
+//            Log.d(TAG, value)
+//        }
 
         // Terminal operators toList
-        lifecycleScope.launch(Dispatchers.IO) {
-            val value = simpleFlow()
-                    .toList()
-            Log.d(TAG, value.toString())
-        }
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            val value = simpleFlow()
+//                    .toList()
+//            Log.d(TAG, value.toString())
+//        }
 
         // Terminal operators toSet
-        lifecycleScope.launch(Dispatchers.IO) {
-            val value = simpleFlow()
-                    .toSet()
-            Log.d(TAG, value.toString())
-        }
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            val value = simpleFlow()
+//                    .toSet()
+//            Log.d(TAG, value.toString())
+//        }
 
         // Terminal operators first
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            val value = simpleFlow()
+//                    .first()
+//            Log.d(TAG, value)
+//        }
+
+        // imperative completion
         lifecycleScope.launch(Dispatchers.IO) {
-            val value = simpleFlow()
-                    .first()
-            Log.d(TAG, value)
+            try {
+                ageFlow().collect { value ->
+                    Log.d(TAG, value.toString())
+                }
+            } finally {
+                Log.d(TAG, "Imperative: Flow has completed")
+            }
         }
 
+        // declarative completion
+        lifecycleScope.launch(Dispatchers.IO) {
+            ageFlow()
+                    .onCompletion {
+                        Log.d(TAG, "Declarative: Flow has completed")
+                    }
+                    .collect { value ->
+                        Log.d(TAG, value.toString())
+                    }
+        }
     }
 
     private fun simpleFlow(): Flow<String> = flow {
@@ -208,6 +229,15 @@ class MainActivity : AppCompatActivity() {
             delay(200)
         }
     }
+
+    private fun ageFlow(): Flow<Int> = ageList.asFlow()
+            .transform { age ->
+                if (age == 30) {
+                    emit(age + 1)
+                } else {
+                    emit(age)
+                }
+            }
 
     private companion object {
         const val TAG = "MainActivity"
