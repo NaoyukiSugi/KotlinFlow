@@ -124,20 +124,36 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // transform operator flow
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            ageList.asFlow()
+//                    .transform { age ->
+//                        emit("Age: $age . The value is getting transformed")
+//                        emit("Age: $age")
+//                    }
+//                    .map { age ->
+//                        "Age: $age"
+//                    }
+//                    .collect { age ->
+//                        Log.d(TAG, age)
+//                    }
+//        }
+
+        // take (Size-limiting operators)
         lifecycleScope.launch(Dispatchers.IO) {
             ageList.asFlow()
-                    .transform { age ->
-                        emit("Age: $age . The value is getting transformed")
-                        emit("Age: $age")
-                    }
-                    .map { age ->
-                        "Age: $age"
-                    }
+                    .take(3)
                     .collect { age ->
-                        Log.d(TAG, age)
+                        Log.d(TAG, age.toString())
                     }
         }
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            userList.asFlow()
+                    .take(2)
+                    .collect { user ->
+                        Log.d(TAG, user)
+                    }
+        }
 
     }
 
