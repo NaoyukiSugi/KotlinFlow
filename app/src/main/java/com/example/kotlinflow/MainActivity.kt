@@ -7,10 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import userList
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,30 +18,43 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        CoroutineScope(Dispatchers.IO).launch {
-//            simpleFlow().collect { user ->
-//                Log.d(TAG, "Flow1 $user")
+//        CoroutineScope(Dispatchers.IO).launch {
+//
+//            launch {
+//                simpleFlow().collect { user ->
+//                    Log.d(TAG, "Flow1 $user")
+//                }
 //            }
+//
+//            launch {
+//                simpleFlow().collect { user ->
+//                    Log.d(TAG, "Flow2 $user")
+//                }
+//            }
+//
+//            launch {
+//                simpleFlow().collect { user ->
+//                    Log.d(TAG, "Flow3 $user")
+//                }
+//            }
+//        }
 
+        CoroutineScope(Dispatchers.IO).launch {
             launch {
-                simpleFlow().collect { user ->
+                flowUserList.collect { user ->
                     Log.d(TAG, "Flow1 $user")
+                    delay(500)
                 }
             }
 
             launch {
-                simpleFlow().collect { user ->
+                userList.asFlow().collect { user ->
                     Log.d(TAG, "Flow2 $user")
+                    delay(500)
                 }
             }
-
-            launch {
-                simpleFlow().collect { user ->
-                    Log.d(TAG, "Flow3 $user")
-                }
-            }
-
         }
+
     }
 
     private fun simpleFlow(): Flow<String> = flow {
