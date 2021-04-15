@@ -19,9 +19,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         CoroutineScope(Dispatchers.IO).launch {
-            simpleFlow().collect { user ->
-                Log.d(TAG, user)
+//            simpleFlow().collect { user ->
+//                Log.d(TAG, "Flow1 $user")
+//            }
+
+            launch {
+                simpleFlow().collect { user ->
+                    Log.d(TAG, "Flow1 $user")
+                }
             }
+
+            launch {
+                simpleFlow().collect { user ->
+                    Log.d(TAG, "Flow2 $user")
+                }
+            }
+
+            launch {
+                simpleFlow().collect { user ->
+                    Log.d(TAG, "Flow3 $user")
+                }
+            }
+
         }
     }
 
