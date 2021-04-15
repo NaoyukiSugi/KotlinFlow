@@ -139,20 +139,65 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // take (Size-limiting operators)
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            ageList.asFlow()
+//                    .take(3)
+//                    .collect { age ->
+//                        Log.d(TAG, age.toString())
+//                    }
+//        }
+//
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            userList.asFlow()
+//                    .take(2)
+//                    .collect { user ->
+//                        Log.d(TAG, user)
+//                    }
+//        }
+
+
+        // Terminal operators reduce
         lifecycleScope.launch(Dispatchers.IO) {
-            ageList.asFlow()
-                    .take(3)
-                    .collect { age ->
-                        Log.d(TAG, age.toString())
+            val sum = ageList.asFlow()
+                    .map { age ->
+                        age + 1
                     }
+                    .reduce { a, b ->
+                        a + b
+                    }
+            Log.d(TAG, sum.toString())
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
-            userList.asFlow()
-                    .take(2)
-                    .collect { user ->
-                        Log.d(TAG, user)
+            val value = userList.asFlow()
+                    .map { user ->
+                        "$user "
                     }
+                    .reduce { a, b ->
+                        a + b
+                    }
+            Log.d(TAG, value)
+        }
+
+        // Terminal operators toList
+        lifecycleScope.launch(Dispatchers.IO) {
+            val value = simpleFlow()
+                    .toList()
+            Log.d(TAG, value.toString())
+        }
+
+        // Terminal operators toSet
+        lifecycleScope.launch(Dispatchers.IO) {
+            val value = simpleFlow()
+                    .toSet()
+            Log.d(TAG, value.toString())
+        }
+
+        // Terminal operators first
+        lifecycleScope.launch(Dispatchers.IO) {
+            val value = simpleFlow()
+                    .first()
+            Log.d(TAG, value)
         }
 
     }
@@ -160,7 +205,7 @@ class MainActivity : AppCompatActivity() {
     private fun simpleFlow(): Flow<String> = flow {
         userList.forEach { user ->
             emit(user)
-            delay(2000)
+            delay(200)
         }
     }
 
