@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 //                }
 //            }
 //        }
-
+//
         // cencel flow on lifecycle aware
 //        lifecycleScope.launch(Dispatchers.IO) {
 //            simpleFlow().collect { user ->
@@ -76,13 +76,37 @@ class MainActivity : AppCompatActivity() {
 
 
         // filter flow
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            ageList.asFlow()
+//                    .filter { age ->
+//                        age % 3 == 1
+//                    }
+//                    .collect { age ->
+//                        Log.d(TAG, age.toString())
+//                    }
+//        }
+//
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            userList.asFlow()
+//                    .filter { user ->
+//                        user == "user3"
+//                    }
+//                    .collect { user ->
+//                        Log.d(TAG, user)
+//                    }
+//        }
+
+        // map operator kotlin
         lifecycleScope.launch(Dispatchers.IO) {
             ageList.asFlow()
                     .filter { age ->
                         age % 3 == 1
                     }
+                    .map { age ->
+                        "Age: $age"
+                    }
                     .collect { age ->
-                        Log.d(TAG, age.toString())
+                        Log.d(TAG, age)
                     }
         }
 
@@ -90,6 +114,9 @@ class MainActivity : AppCompatActivity() {
             userList.asFlow()
                     .filter { user ->
                         user == "user3"
+                    }
+                    .map { user ->
+                        "Name: $user"
                     }
                     .collect { user ->
                         Log.d(TAG, user)
