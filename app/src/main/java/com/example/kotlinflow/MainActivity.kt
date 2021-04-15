@@ -201,30 +201,53 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // imperative completion
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                ageFlow().collect { value ->
-                    Log.d(TAG, value.toString())
-                }
-            } finally {
-                Log.d(TAG, "Imperative: Flow has completed")
-            }
-        }
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            try {
+//                ageFlow().collect { value ->
+//                    Log.d(TAG, value.toString())
+//                }
+//            } finally {
+//                Log.d(TAG, "Imperative: Flow has completed")
+//            }
+//        }
 
         // declarative completion
-        lifecycleScope.launch(Dispatchers.IO) {
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            ageFlow()
+//                    .onCompletion {
+//                        Log.d(TAG, "Declarative: Flow has completed")
+//                    }
+//                    .collect { value ->
+//                        Log.d(TAG, value.toString())
+//                    }
+//        }
+
+        // kotlin flowon
+        lifecycleScope.launch {
             ageFlow()
                     .onCompletion {
-                        Log.d(TAG, "Declarative: Flow has completed")
+                        Log.d(TAG, "${Thread.currentThread().name} : Declarative: Flow has completed")
                     }
                     .collect { value ->
-                        Log.d(TAG, value.toString())
+                        Log.d(TAG, "${Thread.currentThread().name} $value")
+                    }
+        }
+
+        lifecycleScope.launch {
+            simpleFlow()
+                    .flowOn(Dispatchers.IO)
+                    .onCompletion {
+                        Log.d(TAG, "${Thread.currentThread().name} : Declarative: Flow has completed")
+                    }
+                    .collect { value ->
+                        Log.d(TAG, "${Thread.currentThread().name} $value")
                     }
         }
     }
 
     private fun simpleFlow(): Flow<String> = flow {
         userList.forEach { user ->
+            Log.d(TAG, Thread.currentThread().name)
             emit(user)
             delay(200)
         }
@@ -232,12 +255,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun ageFlow(): Flow<Int> = ageList.asFlow()
             .transform { age ->
+                Log.d(TAG, Thread.currentThread().name)
                 if (age == 30) {
                     emit(age + 1)
                 } else {
                     emit(age)
                 }
-            }
+            }.flowOn(Dispatchers.IO)
 
     private companion object {
         const val TAG = "MainActivity"
