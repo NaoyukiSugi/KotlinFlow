@@ -97,29 +97,44 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // map operator kotlin
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            ageList.asFlow()
+//                    .filter { age ->
+//                        age % 3 == 1
+//                    }
+//                    .map { age ->
+//                        "Age: $age"
+//                    }
+//                    .collect { age ->
+//                        Log.d(TAG, age)
+//                    }
+//        }
+//
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            userList.asFlow()
+//                    .filter { user ->
+//                        user == "user3"
+//                    }
+//                    .map { user ->
+//                        "Name: $user"
+//                    }
+//                    .collect { user ->
+//                        Log.d(TAG, user)
+//                    }
+//        }
+
+        // transform operator flow
         lifecycleScope.launch(Dispatchers.IO) {
             ageList.asFlow()
-                    .filter { age ->
-                        age % 3 == 1
+                    .transform { age ->
+                        emit("Age: $age . The value is getting transformed")
+                        emit("Age: $age")
                     }
                     .map { age ->
                         "Age: $age"
                     }
                     .collect { age ->
                         Log.d(TAG, age)
-                    }
-        }
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            userList.asFlow()
-                    .filter { user ->
-                        user == "user3"
-                    }
-                    .map { user ->
-                        "Name: $user"
-                    }
-                    .collect { user ->
-                        Log.d(TAG, user)
                     }
         }
 
