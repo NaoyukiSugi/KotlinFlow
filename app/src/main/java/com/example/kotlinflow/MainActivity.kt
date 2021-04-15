@@ -3,14 +3,11 @@ package com.example.kotlinflow
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //suspend fun to print user list
 //        CoroutineScope(Dispatchers.IO).launch {
 //
 //            launch {
@@ -39,19 +37,41 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            launch {
-                flowUserList.collect { user ->
-                    Log.d(TAG, "Flow1 $user")
-                    delay(500)
-                }
-            }
+        // flow builder
+//        CoroutineScope(Dispatchers.IO).launch {
+//            launch {
+//                flowUserList.collect { user ->
+//                    Log.d(TAG, "Flow1 $user")
+//                    delay(500)
+//                }
+//            }
+//
+//            launch {
+//                userList.asFlow().collect { user ->
+//                    Log.d(TAG, "Flow2 $user")
+//                    delay(500)
+//                }
+//            }
+//        }
 
-            launch {
-                userList.asFlow().collect { user ->
-                    Log.d(TAG, "Flow2 $user")
-                    delay(500)
-                }
+        // cancel flow
+//        CoroutineScope(Dispatchers.IO).launch {
+//            launch {
+//                withTimeoutOrNull(5000) {
+//                    simpleFlow().collect { user ->
+//                        Log.d(TAG, "Flow1 $user")
+//                    }
+//                }
+
+//                simpleFlow().collect { user ->
+//                    Log.d(TAG, "Flow1 $user")
+//                }
+//            }
+//        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            simpleFlow().collect { user ->
+                Log.d(TAG, "Flow1 $user")
             }
         }
 
@@ -60,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     private fun simpleFlow(): Flow<String> = flow {
         userList.forEach { user ->
             emit(user)
-            delay(500)
+            delay(2000)
         }
     }
 
