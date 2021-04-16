@@ -362,14 +362,32 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // flatMapMerge
+//        lifecycleScope.launch {
+//            val startTime = System.currentTimeMillis()
+//            ageList.asFlow()
+//                    .onEach { delay(100) }
+//                    .flatMapMerge { age ->
+//                        userList.asFlow()
+//                                .map { user ->
+//                                    delay(400)
+//                                    "Age: $age - User: $user - Time: ${System.currentTimeMillis() - startTime}"
+//                                }
+//                    }
+//                    .collect {
+//                        Log.d(TAG, it)
+//                    }
+//        }
+
+        // flatMapLatest
         lifecycleScope.launch {
             val startTime = System.currentTimeMillis()
             ageList.asFlow()
                     .onEach { delay(100) }
-                    .flatMapMerge { age ->
+                    .flatMapLatest { age ->
                         userList.asFlow()
                                 .map { user ->
-                                    delay(400)
+                                    Log.d(TAG, "Age: $age ")
+                                    delay(500)
                                     "Age: $age - User: $user - Time: ${System.currentTimeMillis() - startTime}"
                                 }
                     }
