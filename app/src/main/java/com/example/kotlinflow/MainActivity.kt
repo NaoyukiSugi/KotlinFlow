@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.lang.Exception
 import kotlin.system.measureTimeMillis
 
 class MainActivity : AppCompatActivity() {
@@ -298,19 +299,50 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // combine operator
+//        lifecycleScope.launch {
+//            val users = userList.asFlow().onEach { delay(100) }
+//            val ages = ageList.asFlow().onEach { delay(300) }
+//
+//            val time = System.currentTimeMillis()
+//
+//            users.combine(ages) { user, age ->
+//                "Name: $user - Age: $age"
+//            }.collect {
+//                Log.d(TAG, "Value: $it - ${System.currentTimeMillis() - time}")
+//            }
+//        }
+
+        // imperative exception handling
         lifecycleScope.launch {
-            val users = userList.asFlow().onEach { delay(100) }
-            val ages = ageList.asFlow().onEach { delay(300) }
+            val ages = ageList.asFlow()
+                    .map { age ->
+                        check(age < 50) {
+                            "Error on value :$age"
+                        }
+                        age
+                    }
 
-            val time = System.currentTimeMillis()
-
-            users.combine(ages) { user, age ->
-                "Name: $user - Age: $age"
-            }.collect {
-                Log.d(TAG, "Value: $it - ${System.currentTimeMillis() - time}")
+            try {
+                ages.collect { age ->
+                    Log.d(TAG, "value: $age")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, e.toString())
             }
         }
 
+        // declarative exception handling
+        lifecycleScope.launch {
+            val ages = ageList.asFlow()
+            ages.onEach { age ->
+                check(age < 50) {
+                    "Error on value: $age"
+                }
+                Log.d(TAG, "value: $age")
+            }.catch { e ->
+                Log.e(TAG, e.toString())
+            }.collect()
+        }
     }
 
     private fun numFlow(): Flow<Int> = flow {
