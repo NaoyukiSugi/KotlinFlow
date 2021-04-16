@@ -345,15 +345,32 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // flatMapConcat
+//        lifecycleScope.launch {
+//            val startTime = System.currentTimeMillis()
+//            ageList.asFlow()
+//                    .onEach { delay(100) }
+//                    .flatMapConcat { age ->
+//                        userList.asFlow()
+//                                .map { user ->
+//                                    delay(400)
+//                                    "Age: $age - User: $user - Time: ${System.currentTimeMillis() - startTime}"
+//                                }
+//                    }
+//                    .collect {
+//                        Log.d(TAG, it)
+//                    }
+//        }
+
+        // flatMapMerge
         lifecycleScope.launch {
             val startTime = System.currentTimeMillis()
             ageList.asFlow()
                     .onEach { delay(100) }
-                    .flatMapConcat { age ->
+                    .flatMapMerge { age ->
                         userList.asFlow()
                                 .map { user ->
                                     delay(400)
-                                    "User: $user - Age: $age - Time: ${System.currentTimeMillis()} - $startTime"
+                                    "Age: $age - User: $user - Time: ${System.currentTimeMillis() - startTime}"
                                 }
                     }
                     .collect {
