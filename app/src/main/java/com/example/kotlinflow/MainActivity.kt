@@ -313,35 +313,52 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // imperative exception handling
-        lifecycleScope.launch {
-            val ages = ageList.asFlow()
-                    .map { age ->
-                        check(age < 50) {
-                            "Error on value :$age"
-                        }
-                        age
-                    }
-
-            try {
-                ages.collect { age ->
-                    Log.d(TAG, "value: $age")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, e.toString())
-            }
-        }
+//        lifecycleScope.launch {
+//            val ages = ageList.asFlow()
+//                    .map { age ->
+//                        check(age < 50) {
+//                            "Error on value :$age"
+//                        }
+//                        age
+//                    }
+//
+//            try {
+//                ages.collect { age ->
+//                    Log.d(TAG, "value: $age")
+//                }
+//            } catch (e: Exception) {
+//                Log.e(TAG, e.toString())
+//            }
+//        }
 
         // declarative exception handling
+//        lifecycleScope.launch {
+//            val ages = ageList.asFlow()
+//            ages.onEach { age ->
+//                check(age < 50) {
+//                    "Error on value: $age"
+//                }
+//                Log.d(TAG, "value: $age")
+//            }.catch { e ->
+//                Log.e(TAG, e.toString())
+//            }.collect()
+//        }
+
+        // flatMapConcat
         lifecycleScope.launch {
-            val ages = ageList.asFlow()
-            ages.onEach { age ->
-                check(age < 50) {
-                    "Error on value: $age"
-                }
-                Log.d(TAG, "value: $age")
-            }.catch { e ->
-                Log.e(TAG, e.toString())
-            }.collect()
+            val startTime = System.currentTimeMillis()
+            ageList.asFlow()
+                    .onEach { delay(100) }
+                    .flatMapConcat { age ->
+                        userList.asFlow()
+                                .map { user ->
+                                    delay(400)
+                                    "User: $user - Age: $age - Time: ${System.currentTimeMillis()} - $startTime"
+                                }
+                    }
+                    .collect {
+                        Log.d(TAG, it)
+                    }
         }
     }
 
