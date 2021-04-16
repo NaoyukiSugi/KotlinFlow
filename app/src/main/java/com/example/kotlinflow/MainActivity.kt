@@ -272,16 +272,29 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // collectLatest
+//        lifecycleScope.launch {
+//            val time = measureTimeMillis {
+//                numFlow()
+//                        .collectLatest {
+//                            Log.d(TAG, "Collecting the value: $it")
+//                            delay(200)
+//                            Log.d(TAG, "Log2: ${Thread.currentThread().name} : $it")
+//                        }
+//            }
+//            Log.d(TAG, "Total Time: $time")
+//        }
+
+        // zip operator
         lifecycleScope.launch {
-            val time = measureTimeMillis {
-                numFlow()
-                        .collectLatest {
-                            Log.d(TAG, "Collecting the value: $it")
-                            delay(200)
-                            Log.d(TAG, "Log2: ${Thread.currentThread().name} : $it")
-                        }
+            val users = userList.asFlow()
+            val ages = ageList.asFlow()
+
+            users.zip(ages) { user, age ->
+                "User: $user - Age: $age"
             }
-            Log.d(TAG, "Total Time: $time")
+                    .collect {
+                        Log.d(TAG, it)
+                    }
         }
 
     }
