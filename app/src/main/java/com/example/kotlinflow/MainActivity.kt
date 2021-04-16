@@ -259,17 +259,31 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // conflate
+//        lifecycleScope.launch {
+//            val time = measureTimeMillis {
+//                numFlow()
+//                        .conflate()
+//                        .collect {
+//                            delay(200)
+//                            Log.d(TAG, "Log2: ${Thread.currentThread().name} : $it")
+//                        }
+//            }
+//            Log.d(TAG, "Total Time: $time")
+//        }
+
+        // collectLatest
         lifecycleScope.launch {
             val time = measureTimeMillis {
                 numFlow()
-                        .conflate()
-                        .collect {
+                        .collectLatest {
+                            Log.d(TAG, "Collecting the value: $it")
                             delay(200)
                             Log.d(TAG, "Log2: ${Thread.currentThread().name} : $it")
                         }
             }
             Log.d(TAG, "Total Time: $time")
         }
+
     }
 
     private fun numFlow(): Flow<Int> = flow {
