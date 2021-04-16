@@ -285,16 +285,30 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // zip operator
-        lifecycleScope.launch {
-            val users = userList.asFlow()
-            val ages = ageList.asFlow()
+//        lifecycleScope.launch {
+//            val users = userList.asFlow()
+//            val ages = ageList.asFlow()
+//
+//            users.zip(ages) { user, age ->
+//                "User: $user - Age: $age"
+//            }
+//                    .collect {
+//                        Log.d(TAG, it)
+//                    }
+//        }
 
-            users.zip(ages) { user, age ->
-                "User: $user - Age: $age"
+        // combine operator
+        lifecycleScope.launch {
+            val users = userList.asFlow().onEach { delay(100) }
+            val ages = ageList.asFlow().onEach { delay(300) }
+
+            val time = System.currentTimeMillis()
+
+            users.combine(ages) { user, age ->
+                "Name: $user - Age: $age"
+            }.collect {
+                Log.d(TAG, "Value: $it - ${System.currentTimeMillis() - time}")
             }
-                    .collect {
-                        Log.d(TAG, it)
-                    }
         }
 
     }
